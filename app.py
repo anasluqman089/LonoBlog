@@ -1,3 +1,4 @@
+import json
 import os
 import secrets
 import sqlite3
@@ -6,16 +7,20 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 from flask import Flask, g, jsonify, redirect, request, send_from_directory, session, url_for
+from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.security import check_password_hash
 
 
 ROOT = Path(__file__).resolve().parent
+MAX_IMAGE_UPLOAD_BYTES = 10 * 1024 * 1024
 load_dotenv(ROOT / ".env")
 VALID_CATEGORIES = {"Personal", "Ideas", "Work", "Notes"}
 VALID_STATUSES = {"draft", "published"}
+VALID_PROJECT_TYPES = {"Software", "Electronics", "Other"}
 
 
 def require_authorized_user(api=False):
@@ -40,12 +45,18 @@ def create_app(database_path=None):
         DATABASE=str(database_path or os.environ.get("BLOG_DATABASE", ROOT / "blog.sqlite3")),
         SECRET_KEY=os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32),
         BLOG_PASSWORD_HASH=os.environ.get("BLOG_PASSWORD_HASH"),
+        IMAGE_UPLOAD_FOLDER=str(ROOT / "static" / "uploads"),
+        MAX_CONTENT_LENGTH=MAX_IMAGE_UPLOAD_BYTES + 64 * 1024,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true",
         PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
     )
     login_attempts = {}
+
+    @app.errorhandler(RequestEntityTooLarge)
+    def request_too_large(_error):
+        return jsonify(error="Image uploads must be 10 MB or smaller."), 413
 
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(app.config["DATABASE"]) as database:
@@ -85,6 +96,21 @@ def create_app(database_path=None):
             )
             """
         )
+        database.execute(
+            """
+            CREATE TABLE IF NOT EXISTS projects (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                kind TEXT NOT NULL,
+                description TEXT NOT NULL,
+                technologies TEXT NOT NULL DEFAULT '[]',
+                link TEXT NOT NULL DEFAULT '',
+                image TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
 
     def get_database():
         if "database" not in g:
@@ -106,6 +132,19 @@ def create_app(database_path=None):
             "body": row["body"],
             "category": row["category"],
             "status": row["status"],
+            "createdAt": row["created_at"],
+            "updatedAt": row["updated_at"],
+        }
+
+    def project_json(row):
+        return {
+            "id": row["id"],
+            "name": row["name"],
+            "kind": row["kind"],
+            "description": row["description"],
+            "technologies": json.loads(row["technologies"]),
+            "link": row["link"],
+            "image": row["image"],
             "createdAt": row["created_at"],
             "updatedAt": row["updated_at"],
         }
@@ -158,6 +197,51 @@ def create_app(database_path=None):
             "status": status,
         }, None
 
+    def parse_project_payload():
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, dict):
+            return None, "Request body must be a JSON object."
+
+        name = payload.get("name", "")
+        kind = payload.get("kind", "")
+        description = payload.get("description", "")
+        technologies = payload.get("technologies", [])
+        link = payload.get("link", "")
+        image = payload.get("image", "")
+        if not all(isinstance(value, str) for value in (name, kind, description, link, image)):
+            return None, "Project fields must be text."
+        if not isinstance(technologies, list) or not all(isinstance(item, str) for item in technologies):
+            return None, "Project technologies must be a list of text values."
+
+        name = name.strip()
+        description = description.strip()
+        link = link.strip()
+        image = image.strip()
+        technologies = [item.strip() for item in technologies if item.strip()]
+        if not name:
+            return None, "A project name is required."
+        if len(name) > 100 or len(description) > 2000:
+            return None, "Project name or description exceeds the allowed length."
+        if kind not in VALID_PROJECT_TYPES:
+            return None, "Choose Software, Electronics, or Other as the project type."
+        if len(technologies) > 12 or any(len(item) > 40 for item in technologies):
+            return None, "Add up to 12 technologies, each 40 characters or fewer."
+        for value, label in ((link, "Project link"), (image, "Image URL")):
+            if value:
+                parsed_url = urlparse(value)
+                local_upload = label == "Image URL" and value.startswith("/static/uploads/")
+                if not local_upload and (parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc):
+                    return None, f"{label} must be an http(s) URL."
+
+        return {
+            "name": name,
+            "kind": kind,
+            "description": description,
+            "technologies": technologies,
+            "link": link,
+            "image": image,
+        }, None
+
     @app.get("/")
     def home():
         return send_from_directory(ROOT, "home.html")
@@ -165,6 +249,10 @@ def create_app(database_path=None):
     @app.get("/blog")
     def blog():
         return send_from_directory(ROOT, "blog.html")
+
+    @app.get("/projects")
+    def projects():
+        return send_from_directory(ROOT, "projects.html")
 
     @app.get("/markdown.js")
     def markdown_script():
@@ -199,6 +287,13 @@ def create_app(database_path=None):
             )
             public_stories.append(story)
         return jsonify(public_stories)
+
+    @app.get("/api/public/projects")
+    def public_projects():
+        rows = get_database().execute(
+            "SELECT * FROM projects ORDER BY updated_at DESC"
+        ).fetchall()
+        return jsonify([project_json(row) for row in rows])
 
     @app.post("/api/public/stories/<story_id>/like")
     def toggle_public_story_like(story_id):
@@ -299,6 +394,19 @@ def create_app(database_path=None):
         database.commit()
         return jsonify(comment), 201
 
+    @app.delete("/api/comments/<comment_id>")
+    @require_authorized_user(api=True)
+    def delete_comment(comment_id):
+        database = get_database()
+        result = database.execute(
+            "DELETE FROM story_comments WHERE id = ?",
+            (comment_id,),
+        )
+        if result.rowcount == 0:
+            return jsonify(error="Comment not found."), 404
+        database.commit()
+        return jsonify(deleted=True)
+
     @app.get("/api/session")
     def session_status():
         authenticated = session.get("writer_access") is True
@@ -349,6 +457,35 @@ def create_app(database_path=None):
     def studio():
         return send_from_directory(ROOT, "index.html")
 
+    @app.post("/api/uploads/images")
+    @require_authorized_user(api=True)
+    def upload_image():
+        image = request.files.get("image")
+        if image is None:
+            return jsonify(error="Choose an image to upload."), 400
+
+        content = image.stream.read(MAX_IMAGE_UPLOAD_BYTES + 1)
+        if not content:
+            return jsonify(error="The image file is empty."), 400
+        if len(content) > MAX_IMAGE_UPLOAD_BYTES:
+            return jsonify(error="Image uploads must be 10 MB or smaller."), 413
+
+        image_formats = (
+            (content.startswith(b"\x89PNG\r\n\x1a\n"), ".png"),
+            (content.startswith(b"\xff\xd8\xff"), ".jpg"),
+            (content.startswith((b"GIF87a", b"GIF89a")), ".gif"),
+            (content.startswith(b"RIFF") and content[8:12] == b"WEBP", ".webp"),
+        )
+        extension = next((extension for valid, extension in image_formats if valid), None)
+        if extension is None:
+            return jsonify(error="Paste a PNG, JPEG, GIF, or WebP image."), 415
+
+        filename = f"{uuid.uuid4().hex}{extension}"
+        upload_directory = Path(app.config["IMAGE_UPLOAD_FOLDER"])
+        upload_directory.mkdir(parents=True, exist_ok=True)
+        (upload_directory / filename).write_bytes(content)
+        return jsonify(url=url_for("static", filename=f"uploads/{filename}")), 201
+
     @app.get("/api/stories")
     @require_authorized_user(api=True)
     def list_stories():
@@ -367,6 +504,88 @@ def create_app(database_path=None):
                 "SELECT * FROM stories ORDER BY updated_at DESC"
             ).fetchall()
         return jsonify([story_json(row) for row in rows])
+
+    @app.get("/api/projects")
+    @require_authorized_user(api=True)
+    def list_projects():
+        rows = get_database().execute(
+            "SELECT * FROM projects ORDER BY updated_at DESC"
+        ).fetchall()
+        return jsonify([project_json(row) for row in rows])
+
+    @app.post("/api/projects")
+    @require_authorized_user(api=True)
+    def create_project():
+        project, error = parse_project_payload()
+        if error:
+            return jsonify(error=error), 400
+
+        project_id = uuid.uuid4().hex
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        database = get_database()
+        database.execute(
+            """
+            INSERT INTO projects (id, name, kind, description, technologies, link, image, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                project_id,
+                project["name"],
+                project["kind"],
+                project["description"],
+                json.dumps(project["technologies"]),
+                project["link"],
+                project["image"],
+                now,
+                now,
+            ),
+        )
+        database.commit()
+        row = database.execute("SELECT * FROM projects WHERE id = ?", (project_id,)).fetchone()
+        return jsonify(project_json(row)), 201
+
+    @app.put("/api/projects/<project_id>")
+    @require_authorized_user(api=True)
+    def update_project(project_id):
+        project, error = parse_project_payload()
+        if error:
+            return jsonify(error=error), 400
+
+        database = get_database()
+        existing = database.execute("SELECT 1 FROM projects WHERE id = ?", (project_id,)).fetchone()
+        if existing is None:
+            return jsonify(error="Project not found."), 404
+
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        database.execute(
+            """
+            UPDATE projects
+            SET name = ?, kind = ?, description = ?, technologies = ?, link = ?, image = ?, updated_at = ?
+            WHERE id = ?
+            """,
+            (
+                project["name"],
+                project["kind"],
+                project["description"],
+                json.dumps(project["technologies"]),
+                project["link"],
+                project["image"],
+                now,
+                project_id,
+            ),
+        )
+        database.commit()
+        row = database.execute("SELECT * FROM projects WHERE id = ?", (project_id,)).fetchone()
+        return jsonify(project_json(row))
+
+    @app.delete("/api/projects/<project_id>")
+    @require_authorized_user(api=True)
+    def delete_project(project_id):
+        cursor = get_database().execute("DELETE FROM projects WHERE id = ?", (project_id,))
+        get_database().commit()
+        if cursor.rowcount == 0:
+            return jsonify(error="Project not found."), 404
+        return "", 204
 
     @app.post("/api/stories")
     @require_authorized_user(api=True)

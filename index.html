@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#251b17">
+  <meta name="theme-color" content="#dfeeff">
   <meta name="description" content="LonoBlog is Anas's personal writing studio for drafting and publishing blog posts.">
   <title>LonoBlog — Writing Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,26 +12,26 @@
   <style>
     :root {
       color-scheme: light;
-      --blonde: #f3e8d2;
-      --taupe: #9b8b7b;
-      --light-brown: #b68e6b;
-      --true-brown: #806044;
-      --dark-chocolate: #4a3429;
-      --espresso: #251b17;
-      --auburn: #a64f35;
-      --ash: #5d5b59;
-      --paper: var(--blonde);
-      --white: #fffdf8;
+      --blonde: #f6f3ff;
+      --taupe: #7f94b0;
+      --light-brown: #c5d8f0;
+      --true-brown: #6a86ae;
+      --dark-chocolate: #1f3558;
+      --espresso: #10233d;
+      --auburn: #5c8ecb;
+      --ash: #49627d;
+      --paper: #edf6ff;
+      --white: rgba(255,255,255,0.7);
       --ink: var(--espresso);
       --navy: var(--dark-chocolate);
       --navy-soft: var(--true-brown);
       --blue: var(--auburn);
-      --blue-light: #eadbc4;
-      --line: color-mix(in srgb, var(--taupe) 28%, var(--blonde));
+      --blue-light: #e4f1ff;
+      --line: rgba(91, 126, 174, 0.3);
       --muted: var(--ash);
-      --cyan: var(--light-brown);
-      --mono: "IBM Plex Mono", monospace;
-      --sans: "DM Sans", sans-serif;
+      --cyan: #d9ecff;
+      --mono: "Consolas", "SFMono-Regular", monospace;
+      --sans: "Segoe UI", "Trebuchet MS", "Verdana", sans-serif;
       font-family: var(--sans);
       color: var(--ink);
       background: var(--paper);
@@ -40,15 +40,66 @@
     }
 
     * { box-sizing: border-box; }
-    body { min-width: 320px; margin: 0; background-image: linear-gradient(rgb(74 52 41 / 5%) 1px, transparent 1px), linear-gradient(90deg, rgb(74 52 41 / 5%) 1px, transparent 1px); background-size: 32px 32px; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      background:
+        linear-gradient(rgba(237, 246, 255, 0.2), rgba(242, 238, 255, 0.3)),
+        url("/static/frutiger-aero-landscape.png") center / cover fixed,
+        linear-gradient(180deg, #edf7ff 0%, #dfeeff 34%, #f3ebff 100%);
+    }
+    body::before, body::after {
+      position: fixed;
+      top: 25%;
+      z-index: 0;
+      width: 132px;
+      height: 220px;
+      background-image:
+        radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.95) 0 4%, rgba(255,255,255,.35) 7%, transparent 18%),
+        radial-gradient(circle at 50% 50%, rgba(197,236,255,.26) 0 54%, rgba(255,255,255,.4) 63%, rgba(255,255,255,.88) 68%, rgba(127,207,241,.48) 71%, rgba(255,255,255,.18) 75%, transparent 78%),
+        radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.95) 0 4%, rgba(255,255,255,.35) 7%, transparent 18%),
+        radial-gradient(circle at 50% 50%, rgba(197,236,255,.26) 0 54%, rgba(255,255,255,.4) 63%, rgba(255,255,255,.88) 68%, rgba(127,207,241,.48) 71%, rgba(255,255,255,.18) 75%, transparent 78%),
+        radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.95) 0 4%, rgba(255,255,255,.35) 7%, transparent 18%),
+        radial-gradient(circle at 50% 50%, rgba(197,236,255,.26) 0 54%, rgba(255,255,255,.4) 63%, rgba(255,255,255,.88) 68%, rgba(127,207,241,.48) 71%, rgba(255,255,255,.18) 75%, transparent 78%);
+      background-repeat: no-repeat;
+      background-position: 0 2px, 0 2px, 70px 90px, 70px 90px, 20px 158px, 20px 158px;
+      background-size: 74px 74px, 74px 74px, 48px 48px, 48px 48px, 34px 34px, 34px 34px;
+      content: "";
+      filter: drop-shadow(0 8px 14px rgba(50,90,130,.14));
+      opacity: .82;
+      pointer-events: none;
+    }
+    body::before { left: max(8px, calc((100vw - 1480px) / 2)); }
+    body::after { top: 42%; right: max(8px, calc((100vw - 1480px) / 2)); transform: scaleX(-1); }
+    .shell { position: relative; z-index: 1; }
     button, input, select, textarea { font: inherit; }
     button, a, select { -webkit-tap-highlight-color: transparent; }
     button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
-    .shell { width: min(1160px, calc(100% - 56px)); margin-inline: auto; }
+    .shell { width: min(1160px, calc(100% - 56px)); min-height: 100vh; margin-inline: auto; display: flex; flex-direction: column; }
+    main { flex: 1; }
 
-    .site-header { min-height: 76px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid var(--line); }
+    .site-header {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(89, 118, 165, 0.22);
+      backdrop-filter: blur(12px);
+    }
     .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--navy); text-decoration: none; }
-    .brand-mark { width: 31px; height: 31px; display: grid; place-items: center; background: var(--blue); color: white; font: 600 10px var(--mono); transform: rotate(-5deg); }
+    .brand-mark {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(79, 118, 174, 0.3);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(158,196,255,0.75));
+      color: var(--navy);
+      font: 600 10px var(--mono);
+      transform: rotate(-5deg);
+      box-shadow: 0 8px 20px rgba(75, 102, 138, 0.14);
+    }
     .brand-name { font-size: 15px; font-weight: 700; letter-spacing: .2px; }
     .header-meta { display: flex; align-items: center; gap: 15px; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
     .live-dot { width: 7px; height: 7px; display: inline-block; margin-right: 7px; border-radius: 50%; background: #4aa68a; box-shadow: 0 0 0 3px #d8efe9; }
@@ -63,12 +114,34 @@
     .tabs { display: inline-flex; padding: 4px; border: 1px solid var(--line); background: #eee5d8; }
     .tab { min-height: 34px; padding: 0 15px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 600; }
     .tab[aria-selected="true"] { background: var(--white); color: var(--navy); box-shadow: 0 1px 3px rgb(74 52 41 / 10%); }
-    .new-post { min-height: 38px; display: inline-flex; align-items: center; gap: 9px; padding: 0 13px; border: 0; background: var(--navy); color: white; cursor: pointer; font: 500 10px var(--mono); text-transform: uppercase; transition: background .18s ease; }
-    .new-post:hover { background: var(--blue); }
+    .new-post {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 13px;
+      border: 1px solid rgba(255,255,255,0.52);
+      background: linear-gradient(180deg, rgba(107, 156, 219, 0.96), rgba(65, 110, 176, 0.9));
+      color: white;
+      cursor: pointer;
+      font: 500 10px var(--mono);
+      text-transform: uppercase;
+      transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 10px 24px rgba(58, 88, 129, 0.18);
+      border-radius: 14px;
+    }
+    .new-post:hover { background: linear-gradient(180deg, rgba(123, 174, 235, 1), rgba(74, 124, 191, 0.94)); transform: translateY(-1px); }
     .new-post span { color: var(--cyan); font-size: 17px; }
 
     .editor-layout { display: grid; grid-template-columns: minmax(0, 1fr) 278px; gap: 16px; align-items: start; }
-    .writing-surface { padding: 25px clamp(20px, 3.5vw, 43px) 32px; border: 1px solid var(--line); background: var(--white); box-shadow: 0 8px 24px rgb(74 52 41 / 4%); }
+    .writing-surface {
+      padding: 25px clamp(20px, 3.5vw, 43px) 32px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.34);
+      box-shadow: 0 12px 32px rgba(34, 63, 101, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+    }
     .surface-top { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
     .surface-top h2 { margin: 0; color: var(--navy); font-size: 13px; font-weight: 600; }
     .draft-state { color: var(--muted); font: 9px var(--mono); text-transform: uppercase; }
@@ -87,9 +160,33 @@
     .markdown-toolbar button, .emoji-toolbar button { min-height: 30px; padding: 0 9px; border: 1px solid var(--line); border-radius: 3px; background: var(--white); color: var(--navy); cursor: pointer; font-size: 10px; }
     .markdown-toolbar button { font-family: var(--mono); }
     .emoji-toolbar { color: var(--muted); font-size: 10px; }
-    .emoji-toolbar button { min-width: 32px; padding: 0 6px; font-size: 16px; }
+    .emoji-toolbar button {
+      display: grid;
+      width: 34px;
+      min-width: 34px;
+      height: 34px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 50%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(191,224,255,.42));
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.94), 0 4px 10px rgba(41,86,130,.12);
+      font-size: 16px;
+      line-height: 1;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .emoji-toolbar button:hover { transform: translateY(-2px); box-shadow: inset 0 1px 2px rgba(255,255,255,.94), 0 7px 14px rgba(41,86,130,.2); }
     .markdown-help { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .live-preview { margin-top: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.48); }
+    .live-preview-heading { margin: 0 0 15px; padding-bottom: 11px; border-bottom: 1px solid var(--line); color: var(--navy-soft); font: 500 10px var(--mono); text-transform: uppercase; }
+    .live-preview-category { margin: 0 0 8px; color: var(--blue); font: 9px var(--mono); text-transform: uppercase; }
+    .live-preview-title { margin: 0 0 10px; color: var(--navy); font-size: clamp(22px, 4vw, 30px); font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+    .live-preview-excerpt { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .live-preview-placeholder { color: var(--muted); font-size: 12px; font-style: italic; }
     .preview-body { color: var(--ink); font-size: 13px; line-height: 1.9; overflow-wrap: anywhere; }
+    .preview-body img { display: block; max-width: 100%; height: auto; margin: 18px auto; border-radius: 12px; }
     .preview-body p { margin: 0 0 17px; }
     .preview-body h1, .preview-body h2, .preview-body h3, .preview-body h4, .preview-body h5, .preview-body h6 { margin: 1.2em 0 .5em; color: var(--navy); line-height: 1.25; }
     .preview-body ul, .preview-body ol { padding-left: 1.6em; }
@@ -105,7 +202,7 @@
     .editor-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 9px; color: var(--taupe); font: 9px var(--mono); }
 
     .editor-rail { display: grid; gap: 12px; }
-    .rail-section { padding: 18px; border: 1px solid var(--line); background: var(--white); }
+    .rail-section { padding: 18px; border: 1px solid var(--line); background: rgba(255,255,255,0.34); backdrop-filter: blur(10px); border-radius: 18px; }
     .rail-heading { margin: 0 0 14px; color: var(--navy); font: 500 10px var(--mono); text-transform: uppercase; }
     .rail-section .field { margin-top: 0; }
     .rail-section .field select { height: 39px; padding: 0 9px; font-size: 11px; }
@@ -124,9 +221,17 @@
 
     .notice { min-height: 20px; margin: 0 0 12px; color: var(--navy-soft); font-size: 11px; }
     .notice:empty { display: none; }
-    .library-view[hidden], .editor-view[hidden] { display: none; }
+    .library-view[hidden], .editor-view[hidden], .projects-view[hidden], .project-editor[hidden] { display: none; }
     .library-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 13px; }
     .library-toolbar h2 { margin: 0; color: var(--navy); font-size: 14px; font-weight: 600; }
+    .projects-help { max-width: 540px; margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .project-editor { margin-bottom: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.4); }
+    .project-form-heading, .project-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .project-form-heading h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .project-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+    .project-description-field { grid-column: 1 / -1; }
+    .project-form-actions { justify-content: flex-end; margin-top: 16px; }
+    .project-summary { display: grid; gap: 5px; margin-top: 6px !important; }
     .library-toolbar select { min-height: 35px; padding: 0 10px; border: 1px solid var(--line); background: var(--white); color: var(--navy); font-size: 11px; }
     .story-list { display: grid; gap: 9px; }
     .story-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 17px 19px; border: 1px solid var(--line); background: var(--white); }
@@ -154,7 +259,7 @@
     .preview-excerpt { margin: 0 0 25px; color: var(--muted); font-size: 14px; line-height: 1.7; }
     .preview-body { color: var(--ink); font-size: 13px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
     .preview-body p { margin: 0 0 17px; }
-    .site-footer { min-height: 60px; display: flex; justify-content: space-between; align-items: center; gap: 14px; border-top: 1px solid var(--line); color: var(--muted); font: 9px var(--mono); text-transform: uppercase; }
+    .site-footer { width: 100vw; min-height: 76px; flex: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: auto calc(50% - 50vw) 0; padding: 0 max(20px, calc((100vw - 1160px) / 2)); border-top: 1px solid rgba(90,120,160,.2); background: #fff; color: var(--muted); font: 9px var(--mono); text-transform: uppercase; }
 
     @media (max-width: 800px) {
       .shell { width: min(100% - 36px, 650px); }
@@ -172,11 +277,16 @@
       h1 { font-size: 29px; }
       .tabs-bar { align-items: flex-start; flex-direction: column; }
       .editor-rail { grid-template-columns: 1fr; }
+      .project-fields { grid-template-columns: 1fr; }
+      .project-description-field { grid-column: auto; }
       .writing-surface { padding: 18px 15px 23px; }
       #body { min-height: 240px; }
       .story-row { grid-template-columns: 1fr; gap: 12px; }
       .story-actions { justify-content: flex-start; }
-      .site-footer { align-items: flex-start; flex-direction: column; justify-content: center; padding: 13px 0; }
+      .site-footer { align-items: flex-start; flex-direction: column; justify-content: center; padding: 13px 20px; }
+    }
+    @media (max-width: 760px) {
+      body::before, body::after { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
@@ -205,6 +315,7 @@
           <div class="tabs" role="tablist" aria-label="Writing workspace views">
             <button class="tab" id="write-tab" type="button" role="tab" aria-selected="true" aria-controls="editor-view">Write</button>
             <button class="tab" id="library-tab" type="button" role="tab" aria-selected="false" aria-controls="library-view">My posts <span id="post-count">(0)</span></button>
+            <button class="tab" id="projects-tab" type="button" role="tab" aria-selected="false" aria-controls="projects-view">Projects <span id="project-count">(0)</span></button>
           </div>
           <button class="new-post" id="new-post" type="button"><span aria-hidden="true">+</span> New story</button>
         </div>
@@ -224,6 +335,7 @@
               <div class="field">
                 <label for="body">Your story</label>
                 <textarea id="body" name="body" placeholder="Start writing here...&#10;&#10;Use a blank line to start a new paragraph."></textarea>
+                <p class="markdown-help">Paste a copied image here to upload it and insert it into your story.</p>
                 <div class="editor-tools">
                   <div class="markdown-toolbar" aria-label="Markdown formatting">
                     <button type="button" data-markdown="bold" title="Bold">**B**</button>
@@ -249,6 +361,13 @@
                     <button type="button" data-emoji="🎉" aria-label="Insert party popper">🎉</button>
                   </div>
                 </div>
+                <section class="live-preview" aria-label="Live story preview">
+                  <h3 class="live-preview-heading">Live preview</h3>
+                  <p class="live-preview-category" id="live-preview-category">Personal</p>
+                  <h2 class="live-preview-title" id="live-preview-title">Untitled story</h2>
+                  <p class="live-preview-excerpt" id="live-preview-excerpt" hidden></p>
+                  <div class="preview-body" id="live-preview-body"><p class="live-preview-placeholder">Your formatted story will appear here as you write.</p></div>
+                </section>
               </div>
               <div class="editor-foot"><span id="word-count">0 words</span><span><span id="char-count">0</span> characters</span></div>
             </div>
@@ -295,6 +414,57 @@
           </div>
           <div class="story-list" id="story-list"></div>
         </section>
+
+        <section class="projects-view" id="projects-view" role="tabpanel" aria-labelledby="projects-tab" hidden>
+          <div class="library-toolbar">
+            <div>
+              <h2>Your projects</h2>
+              <p class="projects-help">Manage the software, electronics, and other projects shown on your public Projects page.</p>
+            </div>
+            <button class="new-post" id="new-project" type="button"><span aria-hidden="true">+</span> Add project</button>
+          </div>
+          <p class="notice" id="project-notice" role="status" aria-live="polite"></p>
+          <form class="project-editor" id="project-form" hidden>
+            <div class="project-form-heading">
+              <h3 id="project-form-title">Add a project</h3>
+              <button class="story-action" id="cancel-project" type="button">Cancel</button>
+            </div>
+            <div class="project-fields">
+              <div class="field">
+                <label for="project-name">Project name</label>
+                <input id="project-name" name="name" type="text" maxlength="100" required placeholder="What did you make?">
+              </div>
+              <div class="field">
+                <label for="project-kind">Type</label>
+                <select id="project-kind" name="kind">
+                  <option>Software</option>
+                  <option>Electronics</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field project-description-field">
+                <label for="project-description">Description</label>
+                <textarea id="project-description" name="description" maxlength="2000" rows="4" required placeholder="What does it do, and what was your part?"></textarea>
+              </div>
+              <div class="field">
+                <label for="project-technologies">Technologies or components</label>
+                <input id="project-technologies" name="technologies" type="text" placeholder="Python, Raspberry Pi, sensors">
+              </div>
+              <div class="field">
+                <label for="project-link">Project link (optional)</label>
+                <input id="project-link" name="link" type="url" placeholder="https://github.com/you/project">
+              </div>
+              <div class="field">
+                <label for="project-image">Cover image URL (optional)</label>
+                <input id="project-image" name="image" type="url" placeholder="https://example.com/project.jpg">
+              </div>
+            </div>
+            <div class="project-form-actions">
+              <button class="action action-primary" type="submit">Save project</button>
+            </div>
+          </form>
+          <div class="story-list" id="project-list"></div>
+        </section>
       </section>
     </main>
 
@@ -321,17 +491,25 @@
     const notice = document.querySelector("#notice");
     const editorView = document.querySelector("#editor-view");
     const libraryView = document.querySelector("#library-view");
+    const projectsView = document.querySelector("#projects-view");
     const writeTab = document.querySelector("#write-tab");
     const libraryTab = document.querySelector("#library-tab");
+    const projectsTab = document.querySelector("#projects-tab");
     const storyList = document.querySelector("#story-list");
+    const projectList = document.querySelector("#project-list");
+    const projectForm = document.querySelector("#project-form");
+    const projectNotice = document.querySelector("#project-notice");
     const previewDialog = document.querySelector("#preview-dialog");
     let stories = [];
+    let projects = [];
     let editingId = null;
+    let editingProjectId = null;
     let noticeTimer;
+    let projectNoticeTimer;
 
     async function apiRequest(path, options = {}) {
       const headers = new Headers(options.headers || {});
-      if (options.body) headers.set("Content-Type", "application/json");
+      if (options.body && !(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
       const response = await fetch(path, { ...options, headers });
       const result = response.status === 204 ? null : await response.json();
       if (!response.ok) throw new Error(result?.error || "The server request failed.");
@@ -348,19 +526,39 @@
       }
     }
 
+    async function refreshProjects() {
+      try {
+        projects = await apiRequest("/api/projects");
+        document.querySelector("#project-count").textContent = `(${projects.length})`;
+        renderProjects();
+      } catch (error) {
+        showProjectNotice(`Could not load projects: ${error.message}`);
+      }
+    }
+
     function showNotice(message) {
       notice.textContent = message;
       window.clearTimeout(noticeTimer);
       noticeTimer = window.setTimeout(() => { notice.textContent = ""; }, 3500);
     }
 
+    function showProjectNotice(message) {
+      projectNotice.textContent = message;
+      window.clearTimeout(projectNoticeTimer);
+      projectNoticeTimer = window.setTimeout(() => { projectNotice.textContent = ""; }, 5000);
+    }
+
     function setView(view) {
       const showEditor = view === "write";
+      const showLibrary = view === "library";
       editorView.hidden = !showEditor;
-      libraryView.hidden = showEditor;
+      libraryView.hidden = !showLibrary;
+      projectsView.hidden = view !== "projects";
       writeTab.setAttribute("aria-selected", String(showEditor));
-      libraryTab.setAttribute("aria-selected", String(!showEditor));
-      if (!showEditor) renderStories();
+      libraryTab.setAttribute("aria-selected", String(showLibrary));
+      projectsTab.setAttribute("aria-selected", String(view === "projects"));
+      if (showLibrary) renderStories();
+      if (view === "projects") refreshProjects();
     }
 
     function resetEditor() {
@@ -380,6 +578,26 @@
       document.querySelector("#char-count").textContent = characters;
       document.querySelector("#stat-words").textContent = words;
       document.querySelector("#stat-reading").textContent = `${words ? Math.max(1, Math.ceil(words / 220)) : 0} min`;
+      updateLivePreview();
+    }
+
+    function updateLivePreview() {
+      document.querySelector("#live-preview-category").textContent = categoryInput.value;
+      document.querySelector("#live-preview-title").textContent = titleInput.value.trim() || "Untitled story";
+      const excerpt = excerptInput.value.trim();
+      const previewExcerpt = document.querySelector("#live-preview-excerpt");
+      previewExcerpt.textContent = excerpt;
+      previewExcerpt.hidden = !excerpt;
+
+      const previewBody = document.querySelector("#live-preview-body");
+      if (bodyInput.value.trim()) {
+        window.renderMarkdown(previewBody, bodyInput.value);
+      } else {
+        const placeholder = document.createElement("p");
+        placeholder.className = "live-preview-placeholder";
+        placeholder.textContent = "Your formatted story will appear here as you write.";
+        previewBody.replaceChildren(placeholder);
+      }
     }
 
     async function saveStory(status) {
@@ -425,6 +643,111 @@
       button.textContent = label;
       button.addEventListener("click", action);
       return button;
+    }
+
+    function renderProjects() {
+      projectList.replaceChildren();
+      document.querySelector("#project-count").textContent = `(${projects.length})`;
+      if (!projects.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        const heading = document.createElement("strong");
+        heading.textContent = "Your project showcase is empty.";
+        const detail = document.createElement("span");
+        detail.textContent = "Add a software, electronics, or other project to feature it on your public Projects page.";
+        empty.append(heading, detail);
+        projectList.append(empty);
+        return;
+      }
+
+      projects.forEach((project) => {
+        const row = document.createElement("article");
+        row.className = "story-row";
+        const details = document.createElement("div");
+        const meta = document.createElement("div");
+        meta.className = "story-meta";
+        const kind = document.createElement("span");
+        kind.className = "status-pill published";
+        kind.textContent = project.kind;
+        const updated = document.createElement("time");
+        updated.dateTime = project.updatedAt;
+        updated.textContent = `Updated ${new Date(project.updatedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+        meta.append(kind, updated);
+        const heading = document.createElement("h3");
+        heading.textContent = project.name;
+        const summary = document.createElement("p");
+        summary.className = "project-summary";
+        summary.textContent = project.description;
+        details.append(meta, heading, summary);
+
+        const actions = document.createElement("div");
+        actions.className = "story-actions";
+        actions.append(createButton("Edit", "story-action", () => editProject(project.id)));
+        actions.append(createButton("Delete", "story-action delete", () => deleteProject(project.id)));
+        row.append(details, actions);
+        projectList.append(row);
+      });
+    }
+
+    function resetProjectForm() {
+      projectForm.reset();
+      editingProjectId = null;
+      projectForm.hidden = true;
+      document.querySelector("#project-form-title").textContent = "Add a project";
+    }
+
+    function editProject(id) {
+      const project = projects.find((item) => item.id === id);
+      if (!project) return;
+      editingProjectId = id;
+      document.querySelector("#project-name").value = project.name;
+      document.querySelector("#project-kind").value = project.kind;
+      document.querySelector("#project-description").value = project.description;
+      document.querySelector("#project-technologies").value = project.technologies.join(", ");
+      document.querySelector("#project-link").value = project.link;
+      document.querySelector("#project-image").value = project.image;
+      document.querySelector("#project-form-title").textContent = "Edit project";
+      projectForm.hidden = false;
+      document.querySelector("#project-name").focus();
+      projectForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function saveProject(event) {
+      event.preventDefault();
+      const project = {
+        name: document.querySelector("#project-name").value.trim(),
+        kind: document.querySelector("#project-kind").value,
+        description: document.querySelector("#project-description").value.trim(),
+        technologies: document.querySelector("#project-technologies").value.split(",").map((item) => item.trim()).filter(Boolean),
+        link: document.querySelector("#project-link").value.trim(),
+        image: document.querySelector("#project-image").value.trim()
+      };
+      const path = editingProjectId ? `/api/projects/${encodeURIComponent(editingProjectId)}` : "/api/projects";
+      const method = editingProjectId ? "PUT" : "POST";
+      const wasEditing = Boolean(editingProjectId);
+      try {
+        const savedProject = await apiRequest(path, { method, body: JSON.stringify(project) });
+        projects = [savedProject, ...projects.filter((item) => item.id !== savedProject.id)];
+        resetProjectForm();
+        renderProjects();
+        showProjectNotice(wasEditing ? "Project updated." : "Project added to your showcase.");
+      } catch (error) {
+        showProjectNotice(`Could not save project: ${error.message}`);
+      }
+    }
+
+    async function deleteProject(id) {
+      const project = projects.find((item) => item.id === id);
+      if (!project || !window.confirm(`Delete "${project.name}" from your showcase?`)) return;
+      try {
+        await apiRequest(`/api/projects/${encodeURIComponent(id)}`, { method: "DELETE" });
+        projects = projects.filter((item) => item.id !== id);
+        if (editingProjectId === id) resetProjectForm();
+        renderProjects();
+        showProjectNotice("Project deleted.");
+      } catch (error) {
+        showProjectNotice(`Could not delete project: ${error.message}`);
+      }
     }
 
     function renderStories() {
@@ -554,6 +877,15 @@
 
     writeTab.addEventListener("click", () => setView("write"));
     libraryTab.addEventListener("click", () => setView("library"));
+    projectsTab.addEventListener("click", () => setView("projects"));
+    document.querySelector("#new-project").addEventListener("click", () => {
+      resetProjectForm();
+      projectForm.hidden = false;
+      document.querySelector("#project-name").focus();
+      projectForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.querySelector("#cancel-project").addEventListener("click", resetProjectForm);
+    projectForm.addEventListener("submit", saveProject);
     document.querySelector("#new-post").addEventListener("click", () => {
       resetEditor();
       setView("write");
@@ -570,15 +902,56 @@
       saveStory("published");
     });
     bodyInput.addEventListener("input", updateCounts);
+    titleInput.addEventListener("input", updateLivePreview);
+    excerptInput.addEventListener("input", updateLivePreview);
+    categoryInput.addEventListener("change", updateLivePreview);
     document.querySelectorAll("[data-markdown]").forEach((button) => {
       button.addEventListener("click", () => applyMarkdown(button.dataset.markdown));
     });
     document.querySelectorAll("[data-emoji]").forEach((button) => {
       button.addEventListener("click", () => window.insertEmojiAtCursor(bodyInput, button.dataset.emoji));
     });
+    bodyInput.addEventListener("paste", async (event) => {
+      const images = Array.from(event.clipboardData?.items || [])
+        .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+        .map((item) => item.getAsFile())
+        .filter(Boolean);
+      if (!images.length) return;
+
+      event.preventDefault();
+      let insertionStart = bodyInput.selectionStart;
+      let insertionEnd = bodyInput.selectionEnd;
+      showNotice(`Uploading ${images.length === 1 ? "image" : `${images.length} images`}...`);
+
+      for (const image of images) {
+        try {
+          const upload = new FormData();
+          upload.append("image", image, "pasted-image");
+          const result = await apiRequest("/api/uploads/images", { method: "POST", body: upload });
+          const value = bodyInput.value;
+          const before = insertionStart > 0 && value[insertionStart - 1] !== "\n" ? "\n\n" : "";
+          const after = insertionEnd < value.length && value[insertionEnd] !== "\n" ? "\n\n" : "";
+          bodyInput.setRangeText(
+            `${before}![Pasted image](${result.url})${after}`,
+            insertionStart,
+            insertionEnd,
+            "end"
+          );
+          insertionStart = bodyInput.selectionStart;
+          insertionEnd = insertionStart;
+        } catch (error) {
+          showNotice(`Could not paste image: ${error.message}`);
+          return;
+        }
+      }
+      bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
+      bodyInput.focus();
+      showNotice(`${images.length === 1 ? "Image" : "Images"} added to your story.`);
+    });
 
     updateCounts();
     refreshStories();
+    refreshProjects();
   </script>
 </body>
 </html>

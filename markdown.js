@@ -1,6 +1,6 @@
 (() => {
   function appendInline(parent, text) {
-    const pattern = /(`[^`\n]+`|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_|\[[^\]\n]+\]\([^) \n]+\))/g;
+    const pattern = /(`[^`\n]+`|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_|!\[[^\]\n]*\]\([^) \n]+\)|\[[^\]\n]+\]\([^) \n]+\))/g;
     let lastIndex = 0;
 
     for (const match of text.matchAll(pattern)) {
@@ -20,6 +20,20 @@
       } else if (token.startsWith("*") || token.startsWith("_")) {
         element = document.createElement("em");
         appendInline(element, token.slice(1, -1));
+      } else if (token.startsWith("![")) {
+        const image = token.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+        const destination = image[2];
+        if (/^(https?:|\/|\.\.?\/)/i.test(destination)) {
+          element = document.createElement("img");
+          element.alt = image[1];
+          element.src = destination;
+          element.loading = "lazy";
+          element.decoding = "async";
+        } else {
+          parent.append(document.createTextNode(token));
+          lastIndex = index + token.length;
+          continue;
+        }
       } else {
         const link = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
         const anchor = document.createElement("a");
