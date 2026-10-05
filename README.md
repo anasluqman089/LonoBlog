@@ -1,16 +1,26 @@
 # LonoBlog
 
-Anas's personal blog and writing studio, backed by Flask and SQLite. The home
-page introduces the site; the studio creates, edits, and stores stories in
-`blog.sqlite3` on the server.
+*Hello eveyrone* This is my personal blog and project page. I made it with a Frutiger Aero look. It is inspired by the 2000s. The blog doesnt need you to log in but not because Im lazy to do it.
 
-The site uses a Frutiger Aero-inspired sky-and-hills wallpaper with cool blue
-glass surfaces, soft highlights, and rounded controls.
+## The pages
 
-The writing studio and story API are protected by a password. The password is
-stored as a salted hash in the ignored local `.env` file.
+- `/` is the home page.
+- `/blog` is where I post stories.
+- `/projects` is where I show my software and electronics projects.
+- `/studio` is where I write posts and manage my projects (Only I can acess it).
 
-## Run locally
+## Features
+
+I can write posts with Markdown, paste pictures into a post, and preview it
+before publishing. People can leave comments and like posts. When I'm signed
+in, I can delete comments too.
+
+I can add, edit, and delete projects from the Studio. Each project can have a
+description, a list of tools or parts, a link, and a cover image.
+
+## Testing
+
+I first run it using localhost
 
 ```sh
 python3 -m venv .venv
@@ -18,53 +28,42 @@ python3 -m venv .venv
 .venv/bin/python app.py
 ```
 
-Open `http://localhost:8000` for the LonoBlog home page, `/blog` for published
-stories, `/projects` for the public portfolio, or `/studio` to write and manage
-projects. The Projects tab in the protected studio lets you add, edit, and
-delete software, electronics, and other projects, including descriptions,
-technologies/components, links, and optional cover images.
+Then I open `http://localhost:8000`.
 
-## Deploy to Render
+## Put it on PythonAnywhere
 
-The repository includes a Render Blueprint in `render.yaml`. In Render, create
-a new Blueprint from this GitHub repository and set `BLOG_PASSWORD_HASH` when
-prompted. Generate the hash locally using the command below; do not use the
-plain-text studio password as the environment variable value. Render will
-generate `FLASK_SECRET_KEY` automatically and serve the app over HTTPS.
+The I put it in PythonAnywhere. I use PythonAnywhere to host the Flask app. I clone the repos using the bash consoles
 
-This Blueprint uses Render's free web-service plan, which has no persistent
-disk. Stories, comments, projects, and uploaded images are stored on temporary
-service storage and may be lost when the service restarts or redeploys. Export
-or recreate data as needed; use a paid persistent disk before relying on a
-deployed instance for long-term storage.
+```sh
+git clone https://github.com/anasluqman089/LonoBlog.git
+cd LonoBlog
+mkvirtualenv --python=/usr/bin/python3.13 lonoblog-venv
+pip install -r requirements.txt
+```
 
-Blog posts support GitHub-style Markdown: headings, emphasis, lists, task lists,
-tables, quotes, links, images, and fenced code blocks. Paste a copied image into
-the story editor to upload it and insert its Markdown image link. Raw HTML is
-displayed as text. The studio provides Markdown formatting controls, an emoji
-bar, and a live preview; comments also have an emoji bar. Posts show estimated
-reading times, have copyable direct links, per-browser likes, and comments.
-Comments require a name and are limited to 1,000 characters, with a 30-second
-pause between comments from the same browser. The blog page has 20 scattered
-hand-drawn doodles and a softer, rounded layout. The password entry is
-available in the home page footer. `.env` contains the local password hash; it
-is excluded from Git. To set a different password, generate a salted hash
-with `.venv/bin/python -c 'from getpass import getpass; from werkzeug.security import generate_password_hash; print(generate_password_hash(getpass("New studio password: ")))'`
-and set it as `BLOG_PASSWORD_HASH` in `.env`. Use a strong password before
-exposing the app beyond your private development environment.
+Then I create a web app from the Web tab using Manual configuration
+and the same Python version (Python 3.13). I set the virtualenv to
+`/home/Lonos67/.virtualenvs/lonoblog-venv` and edit the WSGI file to load
+my app:
 
-## API
+```python
+import os
+import sys
 
-- `GET /api/stories` lists all stories; `?status=draft` or `?status=published`
-	filters the list.
-- `GET /api/public/stories` lists published stories for the public blog page.
-- `GET /api/public/projects` lists projects for the public portfolio page.
-- `POST /api/public/stories/<id>/like` toggles the current browser's like.
-- `GET /api/public/stories/<id>/comments` lists comments on a published story.
-- `POST /api/public/stories/<id>/comments` adds a comment to a published story.
-- `DELETE /api/comments/<comment-id>` deletes a comment (studio access required).
-- `POST /api/stories` creates a draft or published story.
-- `PUT /api/stories/<id>` updates a story.
-- `DELETE /api/stories/<id>` deletes a story.
-- `GET`, `POST /api/projects` list and create projects (studio access required).
-- `PUT`, `DELETE /api/projects/<id>` update and delete projects (studio access required).
+path = "/home/Lonos67/LonoBlog"
+if path not in sys.path:
+    sys.path.insert(0, path)
+
+os.environ["Hash"] = "....."
+os.environ["Secret"] = "...."
+os.environ["Session cookie secret"] = "true"
+
+from app import app as application
+```
+
+the secret password hash was created in the bash consoles using the command:
+
+```sh
+python -c 'from getpass import getpass; from werkzeug.security import generate_password_hash; print(generate_password_hash(getpass("Studio password: ")))'
+```
+
