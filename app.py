@@ -45,7 +45,10 @@ def create_app(database_path=None):
         DATABASE=str(database_path or os.environ.get("BLOG_DATABASE", ROOT / "blog.sqlite3")),
         SECRET_KEY=os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32),
         BLOG_PASSWORD_HASH=os.environ.get("BLOG_PASSWORD_HASH"),
-        IMAGE_UPLOAD_FOLDER=str(ROOT / "static" / "uploads"),
+        IMAGE_UPLOAD_FOLDER=os.environ.get(
+            "IMAGE_UPLOAD_FOLDER",
+            str(ROOT / "static" / "uploads"),
+        ),
         MAX_CONTENT_LENGTH=MAX_IMAGE_UPLOAD_BYTES + 64 * 1024,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",

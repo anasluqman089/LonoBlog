@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: lonoblog
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1
+    healthCheckPath: /
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: BLOG_PASSWORD_HASH
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: "true"

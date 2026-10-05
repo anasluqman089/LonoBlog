@@ -24,6 +24,20 @@ projects. The Projects tab in the protected studio lets you add, edit, and
 delete software, electronics, and other projects, including descriptions,
 technologies/components, links, and optional cover images.
 
+## Deploy to Render
+
+The repository includes a Render Blueprint in `render.yaml`. In Render, create
+a new Blueprint from this GitHub repository and set `BLOG_PASSWORD_HASH` when
+prompted. Generate the hash locally using the command below; do not use the
+plain-text studio password as the environment variable value. Render will
+generate `FLASK_SECRET_KEY` automatically and serve the app over HTTPS.
+
+This Blueprint uses Render's free web-service plan, which has no persistent
+disk. Stories, comments, projects, and uploaded images are stored on temporary
+service storage and may be lost when the service restarts or redeploys. Export
+or recreate data as needed; use a paid persistent disk before relying on a
+deployed instance for long-term storage.
+
 Blog posts support GitHub-style Markdown: headings, emphasis, lists, task lists,
 tables, quotes, links, images, and fenced code blocks. Paste a copied image into
 the story editor to upload it and insert its Markdown image link. Raw HTML is
