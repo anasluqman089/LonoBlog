@@ -67,3 +67,27 @@ the secret password hash was created in the bash consoles using the command:
 python -c 'from getpass import getpass; from werkzeug.security import generate_password_hash; print(generate_password_hash(getpass("Studio password: ")))'
 ```
 
+## Notes
+
+The process is very hard and there is still a lot minor error but I got schools so think of the error as *decor*. I also used AI in this project when building the page and the sql
+
+## Pictures
+
+### Front Page
+
+<img width="1286" height="584" alt="image" src="https://github.com/user-attachments/assets/ec81702f-9c6d-4c3c-9380-be9edf052b82" />
+
+
+### Blog page
+
+<img width="1288" height="581" alt="image" src="https://github.com/user-attachments/assets/0e542c72-0e75-493a-b565-acac1418dc06" />
+
+### Project page
+
+<img width="1300" height="590" alt="image" src="https://github.com/user-attachments/assets/ed7c6269-9433-440c-a020-c38df4441169" />
+
+### Studio
+
+<img width="1262" height="557" alt="image" src="https://github.com/user-attachments/assets/139d2b94-fc3e-4402-b3b4-1c74b6bcc2b9" />
+
+
